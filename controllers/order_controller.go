@@ -13,7 +13,7 @@ import (
 
 const ORDERS = "/orders"
 const ORDER_ID = "/orders/:id"
-const ITEMS_PROD = "items.Product"
+const ITEMS_PROD = "Items.Product"
 const ORDER_ERROR_NOT_FOUND = "Order not found"
 
 // RegisterOrderRoutes registers endpoints for orders

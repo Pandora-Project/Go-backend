@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"bytes"
+	"echo-gorm-project/controllers"
 	"echo-gorm-project/database"
 	"echo-gorm-project/models"
 	"encoding/json"
@@ -23,7 +24,7 @@ func setupOrderTestDB() {
 
 func setupOrderEcho() *echo.Echo {
     e := echo.New()
-    RegisterOrderRoutes(e)
+    controllers.RegisterOrderRoutes(e)
     return e
 }
 
@@ -36,7 +37,7 @@ func TestCreateOrder_BadRequest(t *testing.T) {
     rec := httptest.NewRecorder()
     c := e.NewContext(req, rec)
 
-    CreateOrder(c)
+    controllers.CreateOrder(c)
     if rec.Code != http.StatusBadRequest {
         t.Errorf("expected 400, got %d", rec.Code)
     }
@@ -58,7 +59,7 @@ func TestCreateOrder_ProductNotFound(t *testing.T) {
     rec := httptest.NewRecorder()
     c := e.NewContext(req, rec)
 
-    CreateOrder(c)
+    controllers.CreateOrder(c)
     if rec.Code != http.StatusNotFound {
         t.Errorf("expected 404, got %d", rec.Code)
     }
@@ -84,7 +85,7 @@ func TestCreateOrder_Success(t *testing.T) {
     rec := httptest.NewRecorder()
     c := e.NewContext(req, rec)
 
-    CreateOrder(c)
+    controllers.CreateOrder(c)
     if rec.Code != http.StatusCreated {
         t.Errorf("expected 201, got %d", rec.Code)
     }
@@ -100,7 +101,7 @@ func TestGetOrder_NotFound(t *testing.T) {
     c.SetParamNames("id")
     c.SetParamValues("999")
 
-    GetOrder(c)
+    controllers.GetOrder(c)
     if rec.Code != http.StatusNotFound {
         t.Errorf("expected 404, got %d", rec.Code)
     }
@@ -130,7 +131,7 @@ func TestGetOrder_Success(t *testing.T) {
     c.SetParamNames("id")
     c.SetParamValues("1")
 
-    GetOrder(c)
+    controllers.GetOrder(c)
     if rec.Code != http.StatusOK {
         t.Errorf("expected 200, got %d", rec.Code)
     }
@@ -151,7 +152,7 @@ func TestUpdateOrder_NotFound(t *testing.T) {
     c.SetParamNames("id")
     c.SetParamValues("999")
 
-    UpdateOrder(c)
+    controllers.UpdateOrder(c)
     if rec.Code != http.StatusNotFound {
         t.Errorf("expected 404, got %d", rec.Code)
     }
@@ -186,7 +187,7 @@ func TestUpdateOrder_Success(t *testing.T) {
     c.SetParamNames("id")
     c.SetParamValues("1")
 
-    UpdateOrder(c)
+    controllers.UpdateOrder(c)
     if rec.Code != http.StatusOK {
         t.Errorf("expected 200, got %d", rec.Code)
     }
@@ -202,7 +203,7 @@ func TestDeleteOrder_NotFound(t *testing.T) {
     c.SetParamNames("id")
     c.SetParamValues("999")
 
-    DeleteOrder(c)
+    controllers.DeleteOrder(c)
     if rec.Code != http.StatusNotFound {
         t.Errorf("expected 404, got %d", rec.Code)
     }
@@ -232,7 +233,7 @@ func TestDeleteOrder_Success(t *testing.T) {
     c.SetParamNames("id")
     c.SetParamValues("1")
 
-    DeleteOrder(c)
+    controllers.DeleteOrder(c)
     if rec.Code != http.StatusOK {
         t.Errorf("expected 200, got %d", rec.Code)
     }

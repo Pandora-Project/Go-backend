@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"bytes"
+	"echo-gorm-project/controllers"
 	"echo-gorm-project/database"
 	"echo-gorm-project/models"
 	"encoding/json"
@@ -22,7 +23,7 @@ func setupCategoryTestDB() {
 
 func setupCategoryEcho() *echo.Echo {
     e := echo.New()
-    RegisterCategoryRoutes(e)
+    controllers.RegisterCategoryRoutes(e)
     return e
 }
 
@@ -39,7 +40,7 @@ func TestCreateCategory_Success(t *testing.T) {
     rec := httptest.NewRecorder()
     c := e.NewContext(req, rec)
 
-    if err := CreateCategory(c); err != nil {
+    if err := controllers.CreateCategory(c); err != nil {
         t.Fatalf("CreateCategory failed: %v", err)
     }
     if rec.Code != http.StatusCreated {
@@ -56,7 +57,7 @@ func TestCreateCategory_BadRequest(t *testing.T) {
     rec := httptest.NewRecorder()
     c := e.NewContext(req, rec)
 
-    CreateCategory(c)
+    controllers.CreateCategory(c)
     if rec.Code != http.StatusBadRequest {
         t.Errorf("expected 400, got %d", rec.Code)
     }
@@ -72,7 +73,7 @@ func TestGetCategory_NotFound(t *testing.T) {
     c.SetParamNames("id")
     c.SetParamValues("999")
 
-    GetCategory(c)
+    controllers.GetCategory(c)
     if rec.Code != http.StatusNotFound {
         t.Errorf("expected 404, got %d", rec.Code)
     }
@@ -93,7 +94,7 @@ func TestUpdateCategory_NotFound(t *testing.T) {
     c.SetParamNames("id")
     c.SetParamValues("999")
 
-    UpdateCategory(c)
+    controllers.UpdateCategory(c)
     if rec.Code != http.StatusNotFound {
         t.Errorf("expected 404, got %d", rec.Code)
     }
@@ -109,7 +110,7 @@ func TestDeleteCategory_NotFound(t *testing.T) {
     c.SetParamNames("id")
     c.SetParamValues("999")
 
-    DeleteCategory(c)
+    controllers.DeleteCategory(c)
     if rec.Code != http.StatusNotFound {
         t.Errorf("expected 404, got %d", rec.Code)
     }
@@ -123,7 +124,7 @@ func TestGetCategories_Empty(t *testing.T) {
     rec := httptest.NewRecorder()
     c := e.NewContext(req, rec)
 
-    GetCategories(c)
+    controllers.GetCategories(c)
     if rec.Code != http.StatusOK {
         t.Errorf("expected 200, got %d", rec.Code)
     }
