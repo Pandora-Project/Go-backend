@@ -1,0 +1,6 @@
+{
+    "sonarlint.connectedMode.project": {
+        "connectionId": "jagiellonian-university",
+        "projectKey": "Pandora-Project_Go-backend"
+    }
+}
