@@ -18,11 +18,11 @@ const ORDER_ERROR_NOT_FOUND = "Order not found"
 
 // RegisterOrderRoutes registers endpoints for orders
 func RegisterOrderRoutes(e *echo.Echo) {
-	e.POST(ORDERS, CreateOrder)
-	e.GET(ORDERS, GetOrders)
-	e.GET(ORDER_ID, GetOrder)
-	e.PUT(ORDER_ID, UpdateOrder)
-	e.DELETE(ORDER_ID, DeleteOrder)
+	e.POST("/orders", CreateOrder)
+	e.GET("/orders", GetOrders)
+	e.GET("/orders/:id", GetOrder)
+	e.PUT("/orders/:id", UpdateOrder)
+	e.DELETE("/orders/:id", DeleteOrder)
 }
 
 // CreateOrder handles creating a new order with items
@@ -75,13 +75,13 @@ func CreateOrder(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to create order"})
 	}
 	// Preload items and products
-	database.DB.Preload(ITEMS_PROD).First(&order, order.ID)
+	database.DB.Preload("Items.Product").First(&order, order.ID)
 	return c.JSON(http.StatusCreated, order)
 }
 
 // GetOrders retrieves orders with optional filters via scopes
 func GetOrders(c echo.Context) error {
-	query := database.DB.Model(&models.Order{}).Preload(ITEMS_PROD)
+	query := database.DB.Model(&models.Order{}).Preload("Items.Product")
 
 	// Filter by status: ?status=paid
 	if status := c.QueryParam("status"); status != "" {
@@ -108,8 +108,8 @@ func GetOrders(c echo.Context) error {
 func GetOrder(c echo.Context) error {
 	id := c.Param("id")
 	var order models.Order
-	if err := database.DB.Preload(ITEMS_PROD).First(&order, id).Error; err != nil {
-		return c.JSON(http.StatusNotFound, map[string]string{"error": ORDER_ERROR_NOT_FOUND})
+	if err := database.DB.Preload("Items.Product").First(&order, id).Error; err != nil {
+		return c.JSON(http.StatusNotFound, map[string]string{"error": "Order not found"})
 	}
 	return c.JSON(http.StatusOK, order)
 }
@@ -119,7 +119,7 @@ func UpdateOrder(c echo.Context) error {
 	id := c.Param("id")
 	var order models.Order
 	if err := database.DB.First(&order, id).Error; err != nil {
-		return c.JSON(http.StatusNotFound, map[string]string{"error": ORDER_ERROR_NOT_FOUND})
+		return c.JSON(http.StatusNotFound, map[string]string{"error": "Order not found"})
 	}
 	// Bind only status field
 	var input struct {
@@ -130,7 +130,7 @@ func UpdateOrder(c echo.Context) error {
 	}
 	order.Status = input.Status
 	database.DB.Save(&order)
-	database.DB.Preload(ITEMS_PROD).First(&order, order.ID)
+	database.DB.Preload("Items.Product").First(&order, order.ID)
 	return c.JSON(http.StatusOK, order)
 }
 
@@ -149,7 +149,7 @@ func DeleteOrder(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to delete order"})
 	}
 	if result.RowsAffected == 0 {
-		return c.JSON(http.StatusNotFound, map[string]string{"error": ORDER_ERROR_NOT_FOUND})
+		return c.JSON(http.StatusNotFound, map[string]string{"error": "Order not found"})
 	}
 	return c.JSON(http.StatusOK, map[string]string{"message": "Order deleted"})
 }
